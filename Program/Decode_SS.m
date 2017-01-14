@@ -40,7 +40,7 @@ numCb = 4;
 
 
 upperBound = floor(L / segLen);
-for i=2:upperBound
+for i=1:upperBound
     
     segHead = (i-1)*segLen+1;
     segTail = i*segLen;

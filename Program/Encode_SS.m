@@ -39,18 +39,11 @@ c = zeros(2, n, 1);
 c(1, 1:10) = [0 1 0 1 0 1 0 0 0 1];
 c(2, 1:10) = [1 0 1 0 1 0 1 1 0 0];
 
-lastSegY = y(1:segLen);
-lastX = dct(lastSegY);
-minValDct = min(lastX);
-shiftVal = -minValDct;
-if (shiftVal > 0 )
-    lastX = lastX + shiftVal;
-end
 
-output_signal = zeros(L,1);
+output_signal = y;
 
 upperBound = floor(L / segLen);
-for i=2:upperBound
+for i=1:upperBound
     
     segHead = (i-1)*segLen+1;
     segTail = i*segLen;
@@ -72,7 +65,7 @@ for i=2:upperBound
         cHead = indexRange_criticalBands(j,1);
         cTail = indexRange_criticalBands(j,2);
         
-        maxVal = max(lastX(cHead:cTail));
+        maxVal = max(x(cHead:cTail));
         
         alpha(cHead:cTail) = p * maxVal;
         
@@ -95,7 +88,6 @@ for i=2:upperBound
     % IDCT
     output_signal(segHead:segTail) = idct(output_y);
     
-    lastX = x;
     
 end
 
