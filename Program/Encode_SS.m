@@ -1,13 +1,13 @@
-function Encode_SS(y, fs)
+function output_signal = Encode_SS(y, fs)
 
 % Parameter
 p = 0.5;
 
 L = length(y);
 segLen = 1000;
-freqLen = floor(segLen/2) + 1;
+%freqLen = floor(segLen/2) + 1;
 
-% Critical Bands
+%% Critical Bands
 nyquistRate = fs / 2;
 
 criticalBands = [50 95 140 235 330 420 560 660 800 940 1125 1265 1500 1735 1970 2340 2720 3280 3840 4690 5440 6375 7690 9375 11625 15375 20250];
@@ -27,26 +27,43 @@ for i=1:length(criticalBands)
     lowerbound = upperbound+1;
 end
 
-indexRange_criticalBands(i, 1) = lowerbound;
-indexRange_criticalBands(i, 2) = freqLen;
+indexRange_criticalBands(i+1, 1) = lowerbound;
+indexRange_criticalBands(i+1, 2) = segLen;
 
 
-% Start encoding
-n = freqLen;
+%% Start encoding
+n = segLen;
 
 % Codeword
-c = zeros(n, 1);
-c(2) = 1; c(4) = 1; c(5) = 1;
+c = zeros(2, n, 1);
+c(1, 1:10) = [0 1 0 1 0 1 0 0 0 1];
+c(2, 1:10) = [1 0 1 0 1 0 1 1 0 0];
 
 lastSegY = y(1:segLen);
-lastX = fftMagnitude(lastSegY);
+lastX = dct(lastSegY);
+minValDct = min(lastX);
+shiftVal = -minValDct;
+if (shiftVal > 0 )
+    lastX = lastX + shiftVal;
+end
+
+output_signal = zeros(L,1);
 
 upperBound = floor(L / segLen);
 for i=2:upperBound
     
-    segY = y((i-1)*segLen+1 : i*segLen);
+    segHead = (i-1)*segLen+1;
+    segTail = i*segLen;
     
-    x = fftMagnitude(segY);
+    segY = y(segHead: segTail);
+    
+    x = dct(segY);
+    
+    minValDct = min(x);
+    shiftVal = -minValDct;
+    if (shiftVal > 0 )
+        x = x + shiftVal;
+    end
     
     % Calculate alpha for each critical band
     alpha = zeros(n, 1);
@@ -61,15 +78,28 @@ for i=2:upperBound
         
     end
     
-    for j=1:n
-        output_y(i) = x(i) + alpha(i)*c(i);
+    index_c = 1;
+    if i == 3 || i == 6 || i == 7
+        index_c = 2;
     end
     
-    % IFFT
+    output_y = zeros(n, 1);
+    for j=1:n
+        output_y(j) = x(j) + alpha(j)*c(index_c, j, 1);
+    end
+    
+    if shiftVal > 0
+        output_y = output_y - shiftVal;
+    end
+    
+    % IDCT
+    output_signal(segHead:segTail) = idct(output_y);
+    
+    lastX = x;
     
 end
 
-
+fprintf('Finished Encoding\n');
 
 
 end
