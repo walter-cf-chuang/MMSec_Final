@@ -51,13 +51,7 @@ for i=1:upperBound
     
     segY = y(segHead: segTail);
     
-    x = dct(segY);
-    
-    minValDct = min(x);
-    shiftVal = -minValDct;
-    if (shiftVal > 0 )
-        x = x + shiftVal;
-    end
+    x = abs(dct(segY));
     
     normalized_x = zeros(n, 1);
     

@@ -24,7 +24,7 @@ y = y(:,1);
 % Parameters
 frameSize = 4096;   % Same as codeword size
 codebookSize = 2;
-p = 0.2;
+p = 0.8;
 
 encodedDataSize = floor(length(y)/frameSize);
 
