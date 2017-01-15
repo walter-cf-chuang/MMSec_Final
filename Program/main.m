@@ -50,7 +50,11 @@ encoded_music = Encode_SS(y, fs, encodedBits, frameSize, p);
 audiowrite('Output/Canon_encoded.wav', encoded_music, fs);
 %sound(y, fs);
 
+save variable.mat cb encodedBits;
+
 %% Decode
+
+load variable.mat;
 
 % decodedBits = Decode_SS(y, fs, cb, frameSize)
 decodedBits = Decode_SS(encoded_music, fs, cb, frameSize);
