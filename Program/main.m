@@ -24,13 +24,14 @@ y = y(:,1);
 % Parameters
 frameSize = 4096;   % Same as codeword size
 codebookSize = 2;
-p = 0.05;
+p = 0.2;
 
 encodedDataSize = floor(length(y)/frameSize);
 
 %% Generate Codebook
 cb = randi([0 1], codebookSize, frameSize, 1);
-cb(:, 1:floor(frameSize*3/4), 1) = 0;
+cb(:, 1:floor(frameSize*3/10), 1) = 0;
+cb(:, floor(frameSize*7/10):end, 1) = 0;
 
 %% Encoded data
 encodedData = randi([1 codebookSize], encodedDataSize, 1);

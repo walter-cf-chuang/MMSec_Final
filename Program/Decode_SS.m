@@ -31,13 +31,15 @@ indexRange_criticalBands(i+1, 2) = segLen;
 n = segLen;
 
 % Codebook
-% cb = zeros(4, n, 1);
-% cb(1, 1:10) = [0 1 0 1 0 1 0 0 0 1];
-% cb(2, 1:10) = [0 1 0 1 1 0 0 1 1 0];
-% cb(3, 1:10) = [1 0 1 0 0 1 0 0 1 0];
-% cb(4, 1:10) = [1 0 1 0 1 0 1 1 0 0];
-% numCb = 4;
 numCb = size(cb, 1);
+
+%Precalculate some variables to improve speed
+cbMagnitude = zeros(numCb, 1);
+for i=1:numCb
+    cbMagnitude(i) = sqrt(dot(cb(i, :, :), cb(i, :, :)));
+end
+
+
 
 decodedBits = zeros(floor(L/segLen) * segLen, 1);
 
@@ -80,7 +82,7 @@ for i=1:upperBound
     possible_c = 0;
     % Correlation
     for j=1:numCb
-        r = dot(normalized_x, cb(j, :, :)) / (sqrt(dot(normalized_x, normalized_x)) * sqrt(dot(cb(j, :, :), cb(j, :, :))) );
+        r = dot(normalized_x, cb(j, :, :)) / (sqrt(dot(normalized_x, normalized_x)) * cbMagnitude(j) );
         if r > maxR
             maxR = r;
             possible_c = j;
@@ -99,7 +101,7 @@ for i=1:upperBound
 %     fprintf('');
 end
 
-% fprintf('Finished Decoding\n');
+ fprintf('Finished Decoding\n');
 
 
 end

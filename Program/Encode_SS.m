@@ -34,12 +34,6 @@ indexRange_criticalBands(i+1, 2) = segLen;
 %% Start encoding
 n = segLen;
 
-% Codeword
-% c = zeros(2, n, 1);
-% c(1, 1:10) = [0 1 0 1 0 1 0 0 0 1];
-% c(2, 1:10) = [1 0 1 0 1 0 1 1 0 0];
-
-
 output_signal = y;
 
 upperBound = floor(L / segLen);
@@ -71,10 +65,6 @@ for i=1:upperBound
         
     end
     
-%     index_c = 1;
-%     if i == 3 || i == 6 || i == 7
-%         index_c = 2;
-%     end
     
     c = encodedBits(segHead:segTail);
     
