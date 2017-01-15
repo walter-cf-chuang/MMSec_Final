@@ -22,14 +22,15 @@ y = y(:,1);
 % ylabel('|P1(f)|');
 
 % Parameters
-frameSize = 1000;   % Same as codeword size
-codebookSize = 10;
-p = 0.5;
+frameSize = 4096;   % Same as codeword size
+codebookSize = 2;
+p = 0.05;
 
 encodedDataSize = floor(length(y)/frameSize);
 
 %% Generate Codebook
 cb = randi([0 1], codebookSize, frameSize, 1);
+cb(:, 1:floor(frameSize*3/4), 1) = 0;
 
 %% Encoded data
 encodedData = randi([1 codebookSize], encodedDataSize, 1);
@@ -50,7 +51,7 @@ encoded_music = Encode_SS(y, fs, encodedBits, frameSize, p);
 audiowrite('Output/Canon_encoded.wav', encoded_music, fs);
 %sound(y, fs);
 
-save variable.mat cb encodedBits;
+save variable.mat cb encodedBits encodedData frameSize;
 
 %% Decode
 
@@ -59,8 +60,14 @@ load variable.mat;
 % decodedBits = Decode_SS(y, fs, cb, frameSize)
 decodedBits = Decode_SS(encoded_music, fs, cb, frameSize);
 
+decodedData = convertBitsToData(cb, decodedBits);
+
 %% Calculate Bit Error Rate
 numDiff = sum((encodedBits == decodedBits) == 0);
 BER = numDiff / length(encodedBits);
 
+numDiffData = sum((encodedData == decodedData) == 0);
+DER = numDiffData / length(encodedData);
+
 fprintf('BER = %.2f (%d / %d)\n', BER, numDiff, length(encodedBits));
+fprintf('DER = %.2f (%d / %d)\n', DER, numDiffData, length(encodedData));

@@ -99,7 +99,7 @@ for i=1:upperBound
 %     fprintf('');
 end
 
-fprintf('Finished Decoding\n');
+% fprintf('Finished Decoding\n');
 
 
 end
