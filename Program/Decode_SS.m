@@ -1,7 +1,7 @@
-function Decode_SS(y, fs)
+function decodedBits = Decode_SS(y, fs, cb, frameSize)
 
 L = length(y);
-segLen = 1000;
+segLen = frameSize;
 
 %% Critical Bands
 nyquistRate = fs / 2;
@@ -31,13 +31,15 @@ indexRange_criticalBands(i+1, 2) = segLen;
 n = segLen;
 
 % Codebook
-cb = zeros(4, n, 1);
-cb(1, 1:10) = [0 1 0 1 0 1 0 0 0 1];
-cb(2, 1:10) = [0 1 0 1 1 0 0 1 1 0];
-cb(3, 1:10) = [1 0 1 0 0 1 0 0 1 0];
-cb(4, 1:10) = [1 0 1 0 1 0 1 1 0 0];
-numCb = 4;
+% cb = zeros(4, n, 1);
+% cb(1, 1:10) = [0 1 0 1 0 1 0 0 0 1];
+% cb(2, 1:10) = [0 1 0 1 1 0 0 1 1 0];
+% cb(3, 1:10) = [1 0 1 0 0 1 0 0 1 0];
+% cb(4, 1:10) = [1 0 1 0 1 0 1 1 0 0];
+% numCb = 4;
+numCb = size(cb, 1);
 
+decodedBits = zeros(floor(L/segLen) * segLen, 1);
 
 upperBound = floor(L / segLen);
 for i=1:upperBound
@@ -85,13 +87,16 @@ for i=1:upperBound
         end
     end
     
-    fprintf('i=%d, Possible c (%d) with r = %f:\n', i, possible_c, maxR);
-    fprintf('[');
-    for j=1:n
-        fprintf('%2d', cb(possible_c, j, 1));
-    end
-    fprintf(']\n');
-    fprintf('');
+    decodedBits(segHead:segTail, 1) = cb(possible_c, :, 1);
+    
+    % Log
+%     fprintf('i=%d, Possible c (%d) with r = %f:\n', i, possible_c, maxR);
+%     fprintf('[');
+%     for j=1:n
+%         fprintf('%2d', cb(possible_c, j, 1));
+%     end
+%     fprintf(']\n');
+%     fprintf('');
 end
 
 fprintf('Finished Decoding\n');

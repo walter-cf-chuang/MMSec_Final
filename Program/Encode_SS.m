@@ -1,11 +1,11 @@
-function output_signal = Encode_SS(y, fs)
+function output_signal = Encode_SS(y, fs, encodedBits, frameSize, param_p)
 
-% Parameter
-p = 0.5;
+% Parameters
+p = param_p;
 
 L = length(y);
-segLen = 1000;
-%freqLen = floor(segLen/2) + 1;
+segLen = frameSize;
+
 
 %% Critical Bands
 nyquistRate = fs / 2;
@@ -35,9 +35,9 @@ indexRange_criticalBands(i+1, 2) = segLen;
 n = segLen;
 
 % Codeword
-c = zeros(2, n, 1);
-c(1, 1:10) = [0 1 0 1 0 1 0 0 0 1];
-c(2, 1:10) = [1 0 1 0 1 0 1 1 0 0];
+% c = zeros(2, n, 1);
+% c(1, 1:10) = [0 1 0 1 0 1 0 0 0 1];
+% c(2, 1:10) = [1 0 1 0 1 0 1 1 0 0];
 
 
 output_signal = y;
@@ -71,14 +71,16 @@ for i=1:upperBound
         
     end
     
-    index_c = 1;
-    if i == 3 || i == 6 || i == 7
-        index_c = 2;
-    end
+%     index_c = 1;
+%     if i == 3 || i == 6 || i == 7
+%         index_c = 2;
+%     end
+    
+    c = encodedBits(segHead:segTail);
     
     output_y = zeros(n, 1);
     for j=1:n
-        output_y(j) = x(j) + alpha(j)*c(index_c, j, 1);
+        output_y(j) = x(j) + alpha(j)*c(j);
     end
     
     if shiftVal > 0
