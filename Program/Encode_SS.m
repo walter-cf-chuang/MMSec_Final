@@ -46,12 +46,6 @@ for i=1:upperBound
     
     x = dct(segY);
     
-    minValDct = min(x);
-    shiftVal = -minValDct;
-    if (shiftVal > 0 )
-        x = x + shiftVal;
-    end
-    
     % Calculate alpha for each critical band
     alpha = zeros(n, 1);
     for j=1:length(indexRange_criticalBands)
@@ -59,7 +53,7 @@ for i=1:upperBound
         cHead = indexRange_criticalBands(j,1);
         cTail = indexRange_criticalBands(j,2);
         
-        maxVal = max(x(cHead:cTail));
+        maxVal = max(abs(x(cHead:cTail)));
         
         alpha(cHead:cTail) = p * maxVal;
         
@@ -70,12 +64,13 @@ for i=1:upperBound
     
     output_y = zeros(n, 1);
     for j=1:n
-        output_y(j) = x(j) + alpha(j)*c(j);
+        if x(j) >= 0
+            output_y(j) = x(j) + alpha(j)*c(j);
+        else
+            output_y(j) = x(j) - alpha(j)*c(j);
+        end
     end
     
-    if shiftVal > 0
-        output_y = output_y - shiftVal;
-    end
     
     % IDCT
     output_signal(segHead:segTail) = idct(output_y);
