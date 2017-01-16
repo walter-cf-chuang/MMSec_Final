@@ -1,4 +1,4 @@
-[y, fs] = audioread('Music/Canon_1min.wav');
+[y, fs] = audioread('Music/Canon_20s.wav');
 
 y = y(:,1);
 
@@ -24,7 +24,8 @@ y = y(:,1);
 % Parameters
 frameSize = 4096;   % Same as codeword size
 codebookSize = 2;
-p = 0.8;
+p = 0.5;
+str = '_p05';
 
 encodedDataSize = floor(length(y)/frameSize);
 
@@ -49,14 +50,14 @@ end
 % output_signal = Encode_SS(y, fs, encodedBits, frameSize, param_p)
 encoded_music = Encode_SS(y, fs, encodedBits, frameSize, p);
 
-audiowrite('Output/Canon_encoded.wav', encoded_music, fs);
+audiowrite(['Output/Canon_encoded' str '.wav'], encoded_music, fs);
 %sound(y, fs);
 
-save variable.mat cb encodedBits encodedData frameSize;
+save variable_p05.mat cb encodedBits encodedData frameSize;
 
 %% Decode
 
-load variable.mat;
+load variable_p05.mat;
 
 % decodedBits = Decode_SS(y, fs, cb, frameSize)
 decodedBits = Decode_SS(encoded_music, fs, cb, frameSize);
