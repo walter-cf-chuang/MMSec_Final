@@ -1,20 +1,20 @@
 %% Decode
 
-[recordeded_music, fs] = audioread('Output/Feng0442.wav');
+[recordeded_music, fs] = audioread('Record/canon_p05.wav');
 
-load variable0451.mat;
+%load variable_p05.mat;
 
 frameSize = 4096;
 encodedData = convertBitsToData(cb, encodedBits);
 
 %% Synchronization
-[encoded_music, fs2] = audioread('Output/Canon_encoded.wav');
+[original_music, fs2] = audioread('Music/Canon_20s.wav');
 
-lagDiff = correlation(encoded_music, recordeded_music, fs);
+lagDiff = correlation(original_music, recordeded_music, fs);
 
 %% Single round decode
 start = (-lagDiff+1);
-len = 2646000;
+len = 882000;
 
 decodedBits = Decode_SS(recordeded_music(start:start+len-1), fs, cb, frameSize);
 decodedData = convertBitsToData(cb, decodedBits);
